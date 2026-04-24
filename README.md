@@ -1,66 +1,235 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Gestión segura de pacientes clínicos - Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyecto desarrollado como laboratorio del módulo de Desarrollo de Aplicaciones Seguras.
 
-## About Laravel
+La aplicación implementa un módulo de seguridad para el acceso a registros de pacientes clínicos, utilizando Laravel como framework PHP seguro.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Objetivo del proyecto
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Implementar una aplicación web local que permita gestionar el acceso a información de pacientes mediante autenticación, autorización por roles y protección de datos clínicos sensibles.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tecnologías utilizadas
 
-## Learning Laravel
+- PHP 8.2
+- Laravel 12
+- Laravel Breeze
+- MySQL
+- XAMPP
+- Composer
+- Node.js y NPM
+- Visual Studio Code
+- Git y GitHub
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Funcionalidades implementadas
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Registro de usuarios.
+- Inicio de sesión.
+- Cierre de sesión.
+- Hash seguro de contraseñas.
+- Validación básica de formularios.
+- Roles de usuario:
+  - Administrador.
+  - Doctor.
+- Middleware de autorización por rol.
+- Middleware de expiración de sesión por inactividad.
+- Vista personalizada para error 403.
+- Panel independiente para administrador.
+- Panel independiente para doctor.
+- Vista de perfil de paciente.
+- Visualización limitada de datos para administrador.
+- Visualización completa de datos clínicos para doctor.
+- Menú dinámico según el rol del usuario.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Roles del sistema
 
-## Laravel Sponsors
+| Rol | Permisos |
+|---|---|
+| admin | Puede acceder al panel administrativo y ver información limitada de pacientes |
+| doctor | Puede acceder al panel médico y ver información clínica completa de pacientes |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Usuarios de prueba
 
-### Premium Partners
+| Usuario | Contraseña | Rol |
+|---|---|---|
+| admin@test.com | Admin12345! | admin |
+| doctor@test.com | Doctor12345! | doctor |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Rutas principales
 
-## Contributing
+| Ruta | Descripción | Acceso |
+|---|---|---|
+| `/register` | Registro de usuarios | Público |
+| `/login` | Inicio de sesión | Público |
+| `/dashboard` | Panel general | Usuario autenticado |
+| `/admin` | Panel de administrador | Solo admin |
+| `/doctor` | Panel del doctor | Solo doctor |
+| `/patients/{patient}` | Perfil de paciente | Admin y doctor, con datos según rol |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Seguridad implementada
 
-## Code of Conduct
+### Autenticación
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+La autenticación fue implementada con Laravel Breeze, permitiendo registro, inicio de sesión, cierre de sesión y manejo básico de errores.
 
-## Security Vulnerabilities
+### Hash de contraseñas
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Las contraseñas se almacenan de forma segura usando los mecanismos de hashing de Laravel.
 
-## License
+### Autorización por roles
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Se creó el middleware `CheckRole`, que valida el rol del usuario antes de permitir el acceso a rutas protegidas.
+
+Ejemplos:
+
+```php
+->middleware(['auth', 'role:admin'])
+->middleware(['auth', 'role:doctor'])
+->middleware(['auth', 'role:admin,doctor'])
+```
+
+### Expiración de sesión
+
+Se creó el middleware `SessionTimeout`, que invalida la sesión después de 15 minutos de inactividad.
+
+```php
+protected int $timeout = 900;
+```
+
+### Manejo de errores
+
+Se creó una vista personalizada para el error 403:
+
+```text
+resources/views/errors/403.blade.php
+```
+
+Esta vista se muestra cuando un usuario intenta acceder a una ruta sin permisos suficientes.
+
+## Vista de paciente según rol
+
+### Administrador
+
+El administrador puede ver información limitada:
+
+- Documento.
+- Nombre completo.
+- Fecha de nacimiento.
+- Teléfono.
+- Correo.
+
+No puede ver:
+
+- Diagnóstico.
+- Tratamiento.
+- Notas médicas.
+- Dirección completa.
+
+### Doctor
+
+El doctor puede ver información clínica completa:
+
+- Documento.
+- Nombre completo.
+- Fecha de nacimiento.
+- Teléfono.
+- Correo.
+- Dirección.
+- Tipo de sangre.
+- Diagnóstico.
+- Tratamiento.
+- Notas médicas.
+
+## Instalación local
+
+Clonar el repositorio:
+
+```bash
+git clone https://github.com/lrojas137/gestion-pacientes-laravel.git
+```
+
+Entrar a la carpeta:
+
+```bash
+cd gestion-pacientes-laravel
+```
+
+Instalar dependencias PHP:
+
+```bash
+composer install
+```
+
+Instalar dependencias frontend:
+
+```bash
+npm install
+```
+
+Copiar archivo de entorno:
+
+```bash
+copy .env.example .env
+```
+
+Generar clave de aplicación:
+
+```bash
+php artisan key:generate
+```
+
+Configurar base de datos en `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=gestion_pacientes_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Ejecutar migraciones:
+
+```bash
+php artisan migrate
+```
+
+Compilar recursos frontend:
+
+```bash
+npm run build
+```
+
+Ejecutar servidor local:
+
+```bash
+php artisan serve
+```
+
+Abrir en el navegador:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Pruebas de seguridad
+
+Las pruebas realizadas se documentan en el archivo:
+
+```text
+SECURITY_TESTS.md
+```
+
+## Mejoras futuras
+
+- Implementar auditoría de accesos a perfiles clínicos.
+- Cifrar campos sensibles de pacientes en base de datos.
+- Implementar doble factor de autenticación.
+- Asignar pacientes a doctores específicos.
+- Crear CRUD completo de pacientes.
+- Aplicar pruebas automatizadas.
+- Configurar HTTPS en producción.
+
+## Conclusión
+
+El proyecto implementa una aplicación web segura básica para la gestión de pacientes clínicos, aplicando autenticación, autorización por roles, protección de datos sensibles, manejo de errores y expiración de sesión por inactividad.
