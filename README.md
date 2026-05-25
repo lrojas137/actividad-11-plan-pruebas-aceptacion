@@ -1,235 +1,176 @@
-# Gestión segura de pacientes clínicos - Laravel
+# Actividad 11 - Plan de Pruebas de Aceptación
 
-Proyecto desarrollado como laboratorio del módulo de Desarrollo de Aplicaciones Seguras.
+## Descripción del proyecto
 
-La aplicación implementa un módulo de seguridad para el acceso a registros de pacientes clínicos, utilizando Laravel como framework PHP seguro.
+Este repositorio contiene el desarrollo de la **Actividad 11: Plan de Pruebas de Aceptación**, realizada para una aplicación web de gestión de pacientes clínicos desarrollada en **Laravel**. La actividad tuvo como finalidad diseñar, ejecutar y documentar pruebas de aceptación, pruebas funcionales, pruebas de API, pruebas de seguridad, pruebas de compatibilidad y pruebas de rendimiento.
 
-## Objetivo del proyecto
+## Herramientas utilizadas
 
-Implementar una aplicación web local que permita gestionar el acceso a información de pacientes mediante autenticación, autorización por roles y protección de datos clínicos sensibles.
+- **Laravel**: framework utilizado para la aplicación web.
+- **XAMPP / MySQL**: entorno local y base de datos.
+- **TestLink**: diseño y gestión de casos de prueba de aceptación.
+- **Selenium con Python**: automatización de pruebas de interfaz de usuario.
+- **Postman**: pruebas de API y validación de endpoints.
+- **Apache JMeter**: pruebas de carga y estrés.
+- **GitHub**: almacenamiento del proyecto, scripts, evidencias e informe final.
+- **Visual Studio Code**: edición del código y ejecución de comandos.
 
-## Tecnologías utilizadas
+## Pruebas realizadas
 
-- PHP 8.2
-- Laravel 12
-- Laravel Breeze
-- MySQL
-- XAMPP
-- Composer
-- Node.js y NPM
-- Visual Studio Code
-- Git y GitHub
+### 1. Diseño de casos de prueba en TestLink
 
-## Funcionalidades implementadas
+Se creó un proyecto de pruebas en TestLink y se diseñaron suites para organizar los casos de prueba de aceptación. Las suites creadas fueron:
 
-- Registro de usuarios.
-- Inicio de sesión.
-- Cierre de sesión.
-- Hash seguro de contraseñas.
-- Validación básica de formularios.
-- Roles de usuario:
-  - Administrador.
-  - Doctor.
-- Middleware de autorización por rol.
-- Middleware de expiración de sesión por inactividad.
-- Vista personalizada para error 403.
-- Panel independiente para administrador.
-- Panel independiente para doctor.
-- Vista de perfil de paciente.
-- Visualización limitada de datos para administrador.
-- Visualización completa de datos clínicos para doctor.
-- Menú dinámico según el rol del usuario.
+- Registro de nuevos pacientes.
+- Búsqueda de pacientes.
+- Actualización de información de pacientes.
+- Registro de historial médico.
 
-## Roles del sistema
+### 2. Pruebas de interfaz con Selenium
 
-| Rol | Permisos |
-|---|---|
-| admin | Puede acceder al panel administrativo y ver información limitada de pacientes |
-| doctor | Puede acceder al panel médico y ver información clínica completa de pacientes |
+Se desarrollaron scripts en Python con Selenium para automatizar flujos principales de la aplicación, como:
 
-## Usuarios de prueba
+- Validación de carga del login.
+- Inicio de sesión con rol administrador y doctor.
+- Acceso a paneles según permisos.
+- Consulta de perfil de pacientes.
+- Validaciones de errores y rutas protegidas.
+- Visualización de historial médico según el rol del usuario.
 
-| Usuario | Contraseña | Rol |
-|---|---|---|
-| admin@test.com | Admin12345! | admin |
-| doctor@test.com | Doctor12345! | doctor |
+### 3. Pruebas de API con Postman
 
-## Rutas principales
+Se creó una colección en Postman para validar los endpoints de la aplicación. Las pruebas incluyeron:
 
-| Ruta | Descripción | Acceso |
-|---|---|---|
-| `/register` | Registro de usuarios | Público |
-| `/login` | Inicio de sesión | Público |
-| `/dashboard` | Panel general | Usuario autenticado |
-| `/admin` | Panel de administrador | Solo admin |
-| `/doctor` | Panel del doctor | Solo doctor |
-| `/patients/{patient}` | Perfil de paciente | Admin y doctor, con datos según rol |
+- Listado de pacientes.
+- Consulta de paciente por ID.
+- Creación de paciente.
+- Actualización de paciente.
+- Consulta y actualización de historial médico.
+- Listado de doctores.
+- Validación de errores por datos inválidos.
+- Validación de seguridad mediante API Key.
 
-## Seguridad implementada
+### 4. Flujos realistas frontend/backend
 
-### Autenticación
+Se probaron escenarios que combinan la interfaz web con la API, verificando que la información consultada desde Postman coincida con la información mostrada en la aplicación. También se validó el acceso diferenciado entre usuarios administrador y doctor.
 
-La autenticación fue implementada con Laravel Breeze, permitiendo registro, inicio de sesión, cierre de sesión y manejo básico de errores.
+### 5. Pruebas de volumen
 
-### Hash de contraseñas
+Se creó un seeder para insertar registros simulados de pacientes en la base de datos. Con esta información se validó que la aplicación pudiera seguir funcionando correctamente con una base de datos cargada.
 
-Las contraseñas se almacenan de forma segura usando los mecanismos de hashing de Laravel.
+### 6. Pruebas de seguridad y permisos
 
-### Autorización por roles
+Se verificaron controles básicos de autenticación y autorización, incluyendo:
 
-Se creó el middleware `CheckRole`, que valida el rol del usuario antes de permitir el acceso a rutas protegidas.
+- Redirección al login cuando un usuario no autenticado intenta acceder a rutas protegidas.
+- Bloqueo de acceso entre roles no autorizados.
+- Restricción de información clínica sensible para el rol administrador.
+- Acceso a información clínica para el rol doctor.
+- Bloqueo de solicitudes API sin API Key o con API Key incorrecta.
 
-Ejemplos:
+### 7. Smoke Test Suite
 
-```php
-->middleware(['auth', 'role:admin'])
-->middleware(['auth', 'role:doctor'])
-->middleware(['auth', 'role:admin,doctor'])
-```
+Se creó una suite de pruebas automatizadas para validar rápidamente los flujos críticos de la aplicación:
 
-### Expiración de sesión
+- Carga del login.
+- Acceso como administrador.
+- Acceso como doctor.
+- Bloqueo de usuario no autenticado.
+- Visualización del perfil clínico por parte del doctor.
 
-Se creó el middleware `SessionTimeout`, que invalida la sesión después de 15 minutos de inactividad.
+### 8. Pruebas de compatibilidad
 
-```php
-protected int $timeout = 900;
-```
+Se ejecutaron pruebas básicas de compatibilidad en los navegadores **Google Chrome** y **Microsoft Edge**, verificando que la página de login cargara correctamente en ambos entornos.
 
-### Manejo de errores
+### 9. Pruebas de carga y estrés con JMeter
 
-Se creó una vista personalizada para el error 403:
+Se realizaron pruebas de rendimiento utilizando Apache JMeter:
 
-```text
-resources/views/errors/403.blade.php
-```
+- **Prueba de carga:** 20 usuarios virtuales, 280 muestras y 0.00% de errores.
+- **Prueba de estrés:** 50 usuarios virtuales, 700 muestras y 0.00% de errores.
 
-Esta vista se muestra cuando un usuario intenta acceder a una ruta sin permisos suficientes.
+Los resultados permitieron comprobar que la aplicación se mantuvo operativa durante las pruebas, aunque los tiempos de respuesta aumentaron bajo mayor carga, lo cual es esperado en un entorno local de desarrollo.
 
-## Vista de paciente según rol
+### 10. Simulación de evaluación por usuario final
 
-### Administrador
+Se documentó una simulación hipotética de evaluación por usuario final. Esta aclaración se realizó porque, en un entorno real, el visto bueno formal debe ser dado por un usuario autorizado, como un médico, administrador de clínica o responsable del sistema.
 
-El administrador puede ver información limitada:
+La simulación permitió representar una prueba de aceptación sobre los flujos principales del sistema.
 
-- Documento.
-- Nombre completo.
-- Fecha de nacimiento.
-- Teléfono.
-- Correo.
+## Ejecución del proyecto Laravel
 
-No puede ver:
-
-- Diagnóstico.
-- Tratamiento.
-- Notas médicas.
-- Dirección completa.
-
-### Doctor
-
-El doctor puede ver información clínica completa:
-
-- Documento.
-- Nombre completo.
-- Fecha de nacimiento.
-- Teléfono.
-- Correo.
-- Dirección.
-- Tipo de sangre.
-- Diagnóstico.
-- Tratamiento.
-- Notas médicas.
-
-## Instalación local
-
-Clonar el repositorio:
-
-```bash
-git clone https://github.com/lrojas137/gestion-pacientes-laravel.git
-```
-
-Entrar a la carpeta:
-
-```bash
-cd gestion-pacientes-laravel
-```
-
-Instalar dependencias PHP:
+Para instalar dependencias del proyecto:
 
 ```bash
 composer install
-```
-
-Instalar dependencias frontend:
-
-```bash
 npm install
 ```
 
-Copiar archivo de entorno:
+Crear el archivo de configuración:
 
 ```bash
-copy .env.example .env
-```
-
-Generar clave de aplicación:
-
-```bash
+cp .env.example .env
 php artisan key:generate
 ```
 
-Configurar base de datos en `.env`:
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=gestion_pacientes_db
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-Ejecutar migraciones:
+Configurar la base de datos en el archivo `.env` y ejecutar migraciones:
 
 ```bash
 php artisan migrate
 ```
 
-Compilar recursos frontend:
-
-```bash
-npm run build
-```
-
-Ejecutar servidor local:
+Ejecutar la aplicación localmente:
 
 ```bash
 php artisan serve
 ```
 
-Abrir en el navegador:
+La aplicación quedará disponible en:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-## Pruebas de seguridad
+## Ejecución de pruebas Selenium
 
-Las pruebas realizadas se documentan en el archivo:
+Activar el entorno virtual de Python e instalar Selenium:
 
-```text
-SECURITY_TESTS.md
+```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install selenium
 ```
 
-## Mejoras futuras
+Ejecutar una prueba específica:
 
-- Implementar auditoría de accesos a perfiles clínicos.
-- Cifrar campos sensibles de pacientes en base de datos.
-- Implementar doble factor de autenticación.
-- Asignar pacientes a doctores específicos.
-- Crear CRUD completo de pacientes.
-- Aplicar pruebas automatizadas.
-- Configurar HTTPS en producción.
+```bash
+python selenium_tests/test_login_roles.py
+```
 
-## Conclusión
+Ejecutar el smoke test crítico:
 
-El proyecto implementa una aplicación web segura básica para la gestión de pacientes clínicos, aplicando autenticación, autorización por roles, protección de datos sensibles, manejo de errores y expiración de sesión por inactividad.
+```bash
+python selenium_tests/smoke_test_suite.py
+```
+
+## Ejecución de pruebas API en Postman
+
+1. Abrir Postman.
+2. Importar la colección ubicada en la carpeta `postman`.
+3. Configurar la variable `base_url` con el valor:
+
+```text
+http://127.0.0.1:8000
+```
+
+4. Agregar el encabezado de seguridad en las solicitudes protegidas:
+
+```text
+X-API-KEY: clave-demo-actividad-11
+```
+
+## Resultados generales
+
+La actividad permitió validar que la aplicación cumple con los flujos principales de aceptación definidos para el taller. Se comprobó el funcionamiento de la autenticación, autorización, consulta de pacientes, acceso por roles, endpoints API, control de errores, compatibilidad básica y rendimiento bajo carga local.
+
+Como oportunidad de mejora, se recomienda ampliar los formularios de registro y actualización, fortalecer la gestión del historial médico y optimizar el rendimiento para ambientes de producción.
